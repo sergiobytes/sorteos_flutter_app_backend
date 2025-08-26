@@ -5,7 +5,9 @@
   "main": "src/app.js",
   "scripts": {
     "dev": "node --watch src/app.js",
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "obfuscate": "javascript-obfuscator src --output dist/src --compact true --control-flow-flattening true",
+    "build": "rm -rf dist && mkdir dist && npm run obfuscate && copy package.json dist\\package.json"
   },
   "author": "Sergio Barreras",
   "license": "MIT",
@@ -19,5 +21,8 @@
     "express": "^5.1.0",
     "firebase-admin": "^13.4.0",
     "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.1"
   }
 }
