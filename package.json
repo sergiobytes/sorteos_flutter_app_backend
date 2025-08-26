@@ -1,0 +1,23 @@
+{
+  "name": "sorteo_backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "node --watch src/app.js",
+    "start": "node src/app.js"
+  },
+  "author": "Sergio Barreras",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "cloudinary": "^2.7.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "firebase-admin": "^13.4.0",
+    "pg": "^8.16.3"
+  }
+}
