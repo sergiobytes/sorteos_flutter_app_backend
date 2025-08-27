@@ -6,12 +6,10 @@ export function last4Of(phone) {
 
 export function phoneHasBuf(phone) {
   const salt = process.env.PHONE_SALT || "";
-  const hash = crypto
+  return crypto
     .createHash("sha256")
     .update(phone + salt, "utf8")
-    .digest();
-
-  return hash;
+    .digest("hex");
 }
 
 export function ensureEncyprionKey() {

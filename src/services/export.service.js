@@ -20,7 +20,6 @@ export async function streamZipWithExcelAndPhotos(rows, res) {
   ws.columns = [
     { header: "Nombre", key: "name", width: 30 },
     { header: "Cartera", key: "wallet", width: 16 },
-    { header: "Foto", key: "photo", width: 40 },
     { header: "Teléfono", key: "phone", width: 22 },
     { header: "Fecha", key: "date", width: 24 },
   ];
@@ -29,8 +28,7 @@ export async function streamZipWithExcelAndPhotos(rows, res) {
     ws.addRow({
       name: r.name,
       wallet: r.wallet_number,
-      photo: r.photo_public_id,
-      phone: `***-***-${r.phone_last4}`,
+      phone: r.phone_full,
       date: r.created_at,
     })
   );
@@ -46,12 +44,13 @@ export async function streamZipWithExcelAndPhotos(rows, res) {
 
   archive.append(Buffer.from(excelBuffer), { name: "sorteo.xlsx" });
 
-  const expireSec = 100;
+  const expireSec = 180;
 
   for (const r of rows) {
+    if (!r.photo_public_id) continue;
     const url = signedPhotoUrl(r.photo_public_id, expireSec);
     const buf = await fetchBuffer(url);
-
+    
     if (buf) {
       const base = `${safeName(r.wallet_number)}-${safeName(r.name)}`;
       archive.append(buf, { name: `fotos/${base}.jpg` });

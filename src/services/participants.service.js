@@ -1,5 +1,5 @@
 import { pool } from "../config/db.js";
-import { last4Of, phoneHasBuf, ensureEncyprionKey } from "./crypto.service.js";
+import { last4Of, phoneHasBuf, ensureEncyprionKey as ensureEncryptionKey } from "./crypto.service.js";
 
 export async function insertParticipant({
   name,
@@ -8,7 +8,7 @@ export async function insertParticipant({
   photoPublicId,
   photoVersion,
 }) {
-  const key = ensureEncyprionKey();
+  const key = ensureEncryptionKey();
   const last4 = last4Of(phone);
   const hash = phoneHasBuf(phone);
 
@@ -44,10 +44,19 @@ export async function getParticipantsMasked() {
 }
 
 export async function getAllForExport() {
-  const { rows } = await pool.query(
-    "select name, wallet_number, photo_public_id, photo_version, phone_last4, created_at from participants order by created_at desc"
-  );
-
+  const key = ensureEncryptionKey();
+  const sql = `
+    SELECT
+      name,
+      wallet_number,
+      pgp_sym_decrypt(phone_enc, $1)::text AS phone_full,
+      phone_last4,
+      photo_public_id,
+      created_at
+    FROM participants
+    ORDER BY created_at DESC
+  `;
+  const { rows } = await pool.query(sql, [key]);
   return rows;
 }
 
