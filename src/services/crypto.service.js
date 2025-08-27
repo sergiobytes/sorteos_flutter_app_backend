@@ -10,6 +10,8 @@ export function phoneHasBuf(phone) {
     .createHash("sha256")
     .update(phone + salt, "utf8")
     .digest();
+
+  return hash;
 }
 
 export function ensureEncyprionKey() {

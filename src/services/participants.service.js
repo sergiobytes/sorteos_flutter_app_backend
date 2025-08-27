@@ -18,7 +18,7 @@ export async function insertParticipant({
         phone_enc, phone_last4, phone_hash) 
     values
         ($1, $2, $3, $4, 
-        pgp_sym_encrypt($5, $6, 'cipher-algo=aes256, compress-algo=1)
+        pgp_sym_encrypt($5, $6, 'cipher-algo=aes256, compress-algo=1'),
         $7, $8)
     returning id, created_at
   `;
