@@ -5,6 +5,6 @@ import { requireAdmin } from "../middlewares/requireAdmin.js";
 const router = Router();
 
 router.get("/admin/export", requireAdmin, exportZip);
-router.post("admin/purge", requireAdmin, purgeDatabase);
+router.post("/admin/purge", requireAdmin, purgeDatabase);
 
 export default router;
