@@ -44,6 +44,8 @@ export async function getParticipantsMasked() {
 }
 
 export async function getAllForExport() {
+  console.log('Obteniendo informacion')
+  
   const { rows } = await pool.query(
     "select name, wallet_number, photo_public_id, photo_version, phone_last4, created_at from participants order by created_at desc"
   );

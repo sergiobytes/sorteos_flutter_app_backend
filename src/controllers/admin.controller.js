@@ -7,6 +7,8 @@ import { streamZipWithExcelAndPhotos } from "../services/export.service.js";
 import { deletePhotosByPublicIds } from "../services/cloudinary.service.js";
 
 export async function exportZip(_req, res) {
+  console.log('Exportando')
+  
   try {
     const rows = await getAllForExport();
     res.setHeader("Content-Type", "application/zip");

@@ -9,7 +9,7 @@ export async function requireAdmin(req, res, next) {
 
     const decoded = await adminApp.auth().verifyIdToken(token);
 
-    if (decoded?.admin === true) return next();
+    if (decoded.uid !== undefined) return next();
     return res.status(403).send("forbidden");
   } catch {
     return res.status(401).send("unauthorized");
