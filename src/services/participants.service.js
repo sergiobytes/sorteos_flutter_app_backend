@@ -60,24 +60,14 @@ export async function getAllForExport() {
   return rows;
 }
 
-export async function getPublicIdsForPurge({ beforeDate } = {}) {
-  const params = [];
-  let sql = "SELECT photo_public_id FROM participants";
-  if (beforeDate) {
-    params.push(beforeDate);
-    sql += " WHERE created_at < $1";
-  }
-  const { rows } = await pool.query(sql, params);
+export async function getPublicIdsForPurge() {
+  const sql = "SELECT photo_public_id FROM participants";
+  const { rows } = await pool.query(sql);
   return rows.map((r) => r.photo_public_id);
 }
 
-export async function purgeParticipants({ beforeDate } = {}) {
-  const params = [];
-  let sql = "DELETE FROM participants";
-  if (beforeDate) {
-    params.push(beforeDate);
-    sql += " WHERE created_at < $1";
-  }
-  const { rowCount } = await pool.query(sql, params);
+export async function purgeParticipants() {
+  const sql = "DELETE FROM participants";
+  const { rowCount } = await pool.query(sql);
   return rowCount;
 }

@@ -32,20 +32,15 @@ export async function purgeDatabase(req, res) {
         hint: "Send header X-Confirm-Purge: yes",
       });
 
-    const { deletePhotos = false, beforeDate } = req.body || {};
+    // 1) Recolectar todos los public_id para borrar fotos (sin filtrar por fecha)
+    const publicIds = await getPublicIdsForPurge();
 
-    // 1) Recolectar public_id por si se van a borrar fotos
-    let publicIds = [];
-    if (deletePhotos) {
-      publicIds = await getPublicIdsForPurge({ beforeDate });
-    }
+    // 2) Borrar todos los registros (sin filtrar por fecha)
+    const deletedCount = await purgeParticipants();
 
-    // 2) Borrar registros (retorna cantidad)
-    const deletedCount = await purgeParticipants({ beforeDate });
-
-    // 3) Borrar fotos si aplica
+    // 3) Borrar fotos siempre que haya publicIds
     let deletedPhotos = 0;
-    if (deletePhotos && publicIds.length) {
+    if (publicIds.length) {
       deletedPhotos = await deletePhotosByPublicIds(publicIds);
     }
 
