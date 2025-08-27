@@ -14,8 +14,6 @@ function safeName(str) {
 }
 
 export async function streamZipWithExcelAndPhotos(rows, res) {
-  console.log("Generando zip");
-
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet("Sorteo");
 
@@ -61,6 +59,4 @@ export async function streamZipWithExcelAndPhotos(rows, res) {
   }
 
   await archive.finalize();
-
-  console.log("ZIP enviado");
 }
