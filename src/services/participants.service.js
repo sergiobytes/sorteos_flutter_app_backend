@@ -15,11 +15,11 @@ export async function insertParticipant({
   const sql = `
     insert into participants 
         (name, wallet_number, photo_public_id, photo_version, 
-        phone_enc, phone_last4, phone_hash) 
+        phone_enc, phone_last4, phone_hash, created_at) 
     values
         ($1, $2, $3, $4, 
         pgp_sym_encrypt($5, $6, 'cipher-algo=aes256, compress-algo=1'),
-        $7, $8)
+        $7, $8, NOW() AT TIME ZONE 'UTC')
     returning id, created_at
   `;
 

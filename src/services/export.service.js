@@ -29,7 +29,15 @@ export async function streamZipWithExcelAndPhotos(rows, res) {
       name: r.name,
       wallet: r.wallet_number,
       phone: r.phone_full,
-      date: r.created_at,
+      date: new Date(r.created_at).toLocaleString('es-MX', { 
+        timeZone: process.env.TZ || 'America/Hermosillo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }),
     })
   );
 
