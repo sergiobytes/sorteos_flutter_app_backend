@@ -10,7 +10,13 @@ const FOLDER = "ine-photos";
 
 export async function buildUploadSignature() {
   const timestamp = Math.floor(Date.now() / 1000);
-  const paramsToString = { folder: FOLDER, timestamp, type: "authenticated" };
+  
+  const paramsToString = { 
+    folder: FOLDER, 
+    timestamp, 
+    type: "authenticated"
+  };
+  
   const signature = cloudinary.utils.api_sign_request(
     paramsToString,
     process.env.CLOUDINARY_API_SECRET
@@ -22,7 +28,7 @@ export async function buildUploadSignature() {
     timestamp,
     signature,
     folder: FOLDER,
-    type: "authenticated",
+    type: "authenticated"
   };
 }
 
@@ -34,7 +40,14 @@ export function signedPhotoUrl(publicId, seconds = 100) {
     type: "authenticated",
     sign_url: true,
     expire_at,
-    transformation: [{ fecth_format: "jpg" }],
+    // Optimización para WhatsApp aplicada al mostrar
+    transformation: [{ 
+      width: 1080, 
+      height: 1080, 
+      crop: "limit", 
+      quality: "auto:good", 
+      format: "jpg" 
+    }],
   });
 }
 
