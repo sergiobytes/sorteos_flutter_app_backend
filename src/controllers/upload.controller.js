@@ -1,7 +1,7 @@
 import { buildUploadSignature } from "../services/cloudinary.service.js";
 import { isWalletAvailable } from "../services/participants.service.js";
 
-export async function signUpload(_req, res) {
+export async function signUpload(req, res) {
   try {
     const { walletNumber } = req.body || {};
 
