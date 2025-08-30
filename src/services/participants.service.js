@@ -107,3 +107,15 @@ export async function getUnpaidParticipants(q = "") {
   const { rows } = await pool.query(sql, params);
   return rows;
 }
+
+export async function isWalletAvailable(walletNumber) {
+  if (!walletNumber) return { ok: false, reason: "invalid_format_or_range" };
+
+  const { rows } = await pool.query(
+    "SELECT 1 FROM participants WHERE wallet_number = $1 LIMIT 1",
+    [walletNumber]
+  );
+  return rows.length === 0
+    ? { ok: true, wallet: walletNumber }
+    : { ok: false, reason: "already_taken", wallet: walletNumber };
+}

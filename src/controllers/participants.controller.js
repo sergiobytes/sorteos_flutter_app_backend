@@ -1,6 +1,7 @@
 import {
   insertParticipant,
   getParticipantsMasked,
+  isWalletAvailable,
 } from "../services/participants.service.js";
 
 export async function createParticipant(req, res) {
@@ -33,5 +34,20 @@ export async function listMasked(_req, res) {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "db_query_failed" });
+  }
+}
+
+export async function validateWallet(req, res) {
+  try {
+    const wallet = req.query.wallet || req.body?.walletNumber;
+    const out = await isWalletAvailable(wallet);
+    if (!out.ok) {
+      const status = out.reason === "already_taken" ? 409 : 400;
+      return res.status(status).json(out);
+    }
+    res.json(out); // { ok: true, wallet: "007" }
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "internal_server_error" });
   }
 }
