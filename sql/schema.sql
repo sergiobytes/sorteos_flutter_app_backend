@@ -31,3 +31,9 @@ order by
   alter table participants add column is_paid boolean default false;
   alter table participants add column paid_at timestamptz;
   alter table participants add column marked_by_email text;
+
+  alter table participants
+  add constraint chk_wallet_number_format
+  check (wallet_number ~ '^[0-9]{3}$' and wallet_number::int between 1 and 840);
+
+  create unique index if not exists idx_participants_wallet_number on participants (wallet_number);
