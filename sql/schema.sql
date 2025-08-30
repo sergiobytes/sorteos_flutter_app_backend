@@ -37,3 +37,5 @@ order by
   check (wallet_number ~ '^[0-9]{3}$' and wallet_number::int between 1 and 840);
 
   create unique index if not exists idx_participants_wallet_number on participants (wallet_number);
+
+  drop index if exists idx_participants_phonehash;
