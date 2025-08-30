@@ -22,6 +22,9 @@ export async function streamZipWithExcelAndPhotos(rows, res) {
     { header: "Cartera", key: "wallet", width: 16 },
     { header: "Teléfono", key: "phone", width: 22 },
     { header: "Fecha", key: "date", width: 24 },
+    { header: "Pagado", key: "isPaid", width: 10 },
+    { header: "Fecha de Pago", key: "paidAt", width: 24 },
+    { header: "Marcado por", key: "markedByEmail", width: 30 },
   ];
 
   rows.forEach((r) =>
@@ -29,15 +32,28 @@ export async function streamZipWithExcelAndPhotos(rows, res) {
       name: r.name,
       wallet: r.wallet_number,
       phone: r.phone_full,
-      date: new Date(r.created_at).toLocaleString('es-MX', { 
-        timeZone: process.env.TZ || 'America/Hermosillo',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
+      date: new Date(r.created_at).toLocaleString("es-MX", {
+        timeZone: process.env.TZ || "America/Hermosillo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
       }),
+      isPaid: r.is_paid ? "Sí" : "No",
+      paidAt: r.paid_at
+        ? new Date(r.paid_at).toLocaleString("es-MX", {
+            timeZone: process.env.TZ || "America/Hermosillo",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          })
+        : "",
+      markedByEmail: r.marked_by_email || "",
     })
   );
 
@@ -58,7 +74,7 @@ export async function streamZipWithExcelAndPhotos(rows, res) {
     if (!r.photo_public_id) continue;
     const url = signedPhotoUrl(r.photo_public_id, expireSec);
     const buf = await fetchBuffer(url);
-    
+
     if (buf) {
       const base = `${safeName(r.wallet_number)}-${safeName(r.name)}`;
       archive.append(buf, { name: `fotos/${base}.jpg` });

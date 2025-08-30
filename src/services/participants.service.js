@@ -56,7 +56,10 @@ export async function getAllForExport() {
       pgp_sym_decrypt(phone_enc, $1)::text AS phone_full,
       phone_last4,
       photo_public_id,
-      created_at
+      created_at,
+      is_paid,
+      paid_at,
+      marked_by_email
     FROM participants
     ORDER BY created_at DESC
   `;
