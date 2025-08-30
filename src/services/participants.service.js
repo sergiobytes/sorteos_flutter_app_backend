@@ -79,13 +79,31 @@ export async function purgeParticipants() {
   return rowCount;
 }
 
-export async function markWalletAsPaid(participantId, adminEmail) {
+export async function markWalletAsPaid(walletNumber, adminEmail) {
   const sql = `
     UPDATE participants
     SET is_paid = true, paid_at = NOW() AT TIME ZONE 'UTC', marked_by_email = $1
-    WHERE id = $2
+    WHERE wallet_number = $2
   `;
-  const params = [adminEmail, participantId];
-  const { rowCount } = await pool.query(sql, params);
-  return rowCount > 0;
+  return pool.query(sql, [adminEmail, walletNumber]);
+}
+
+export async function getUnpaidParticipants(q = "") {
+  // Filtra por nombre (ILIKE) o por cartera exacta o prefijo
+  const params = [];
+  let where = "WHERE is_paid IS NOT TRUE";
+  if (q && q.trim()) {
+    params.push(`%${q.trim()}%`);
+    params.push(q.replace(/\D/g, "")); // solo dígitos
+    where += ` AND (name ILIKE $1 OR wallet_number LIKE $2 || '%')`;
+  }
+  const sql = `
+    SELECT id, name, wallet_number, created_at
+    FROM participants
+    ${where}
+    ORDER BY wallet_number::int ASC
+    LIMIT 500
+  `;
+  const { rows } = await pool.query(sql, params);
+  return rows;
 }
