@@ -27,3 +27,7 @@ from
   participants
 order by
   created_at desc;
+
+  alter table participants add column is_paid boolean default false;
+  alter table participants add column paid_at timestamptz;
+  alter table participants add column marked_by_email text;

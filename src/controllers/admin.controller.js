@@ -2,6 +2,7 @@ import {
   getAllForExport,
   getPublicIdsForPurge,
   purgeParticipants,
+  markWalletAsPaid,
 } from "../services/participants.service.js";
 import { streamZipWithExcelAndPhotos } from "../services/export.service.js";
 import { deletePhotosByPublicIds } from "../services/cloudinary.service.js";
@@ -52,5 +53,23 @@ export async function purgeDatabase(req, res) {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "purge_failed" });
+  }
+}
+
+export async function markAsPaid(req, res) {
+  try {
+    const { participantId } = req.params;
+    const { adminEmail } = req.body;
+
+    const result = await markWalletAsPaid(participantId, adminEmail);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "participant_not_found" });
+    }
+
+    res.json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "internal_server_error" });
   }
 }

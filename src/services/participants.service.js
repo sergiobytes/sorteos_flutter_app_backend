@@ -1,5 +1,9 @@
 import { pool } from "../config/db.js";
-import { last4Of, phoneHasBuf, ensureEncyprionKey as ensureEncryptionKey } from "./crypto.service.js";
+import {
+  last4Of,
+  phoneHasBuf,
+  ensureEncyprionKey as ensureEncryptionKey,
+} from "./crypto.service.js";
 
 export async function insertParticipant({
   name,
@@ -70,4 +74,15 @@ export async function purgeParticipants() {
   const sql = "DELETE FROM participants";
   const { rowCount } = await pool.query(sql);
   return rowCount;
+}
+
+export async function markWalletAsPaid(participantId, adminEmail) {
+  const sql = `
+    UPDATE participants
+    SET is_paid = true, paid_at = NOW() AT TIME ZONE 'UTC', marked_by_email = $1
+    WHERE id = $2
+  `;
+  const params = [adminEmail, participantId];
+  const { rowCount } = await pool.query(sql, params);
+  return rowCount > 0;
 }
