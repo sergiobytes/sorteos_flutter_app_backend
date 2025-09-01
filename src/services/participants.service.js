@@ -89,13 +89,18 @@ export async function markWalletAsPaid(walletNumber, adminEmail) {
 }
 
 export async function getUnpaidParticipants(q = "") {
-  // Filtra por nombre (ILIKE) o por cartera exacta o prefijo
   const params = [];
   let where = "WHERE is_paid IS NOT TRUE";
   if (q && q.trim()) {
-    params.push(`%${q.trim()}%`);
-    params.push(q.replace(/\D/g, "")); // solo dígitos
-    where += ` AND (name ILIKE $1 OR wallet_number LIKE $2 || '%')`;
+    const digits = q.replace(/\D/g, "");
+    if (digits) {
+      params.push(`%${q.trim()}%`);
+      params.push(digits);
+      where += ` AND (name ILIKE $1 OR wallet_number LIKE $2 || '%')`;
+    } else {
+      params.push(`%${q.trim()}%`);
+      where += ` AND name ILIKE $1`;
+    }
   }
   const sql = `
     SELECT id, name, wallet_number, created_at
